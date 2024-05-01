@@ -1,0 +1,96 @@
+$radius: 200px;
+$dotSize: 6px;
+$spokesNum: 36;
+$planesNum: 12;
+
+.main-wrapper {
+  display: flex;
+  position: absolute;
+  transform-style: preserve-3d;
+  perspective: 400px;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 4rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.sphere-wrapper {
+  transform-style: preserve-3d;
+  width: $radius;
+  height: $radius;
+  position: relative;
+  animation: rotate3d 10s linear infinite;
+}
+
+.plane {
+  position: absolute;
+  transform-style: preserve-3d;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.spoke {
+  transform-origin: 0 0;
+  transform-style: preserve-3d;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: calc($radius / 2);
+  width: 0;
+}
+
+.dot {
+  position: absolute;
+  width: $dotSize;
+  height: $dotSize;
+  border-radius: 50%;
+  background: #646cff;
+  left: calc(-1 * $dotSize / 2);
+  top: 100%;
+  transform: rotateX(90deg);
+}
+
+@function getDegree($index) {
+  @return calc(360deg / $spokesNum) * $index;
+}
+
+@function getColorDegree($index) {
+  @return calc(360deg / $spokesNum) * $index;
+}
+
+@for $i from 1 through $spokesNum {
+  .spoke-#{$i} {
+    transform: rotateZ(getDegree($i));
+  }
+}
+
+@for $i from 1 through $planesNum {
+  .plane-#{$i} {
+    transform: rotateY(calc(180deg / $planesNum) * $i);
+  }
+}
+
+@for $i from 0 through calc($spokesNum / 2) {
+  $delay: calc($i / $spokesNum) * 1s;
+  $j: $spokesNum - $i;
+  .spoke-#{$i} .dot, .spoke-#{$j} .dot {
+    animation: pulsate 0.5s infinite $delay alternate both;
+    background-color: spin(rgb(89, 0, 255), getColorDegree($i));
+  }
+}
+
+@keyframes rotate3d {
+  0% { transform: rotate3d(1, 1, 1, 0deg); }
+  25% { transform: rotate3d(1, 1, 1, 90deg); }
+  50% { transform: rotate3d(1, 1, 1, 180deg); }
+  75% { transform: rotate3d(1, 1, 1, 270deg); }
+  100% { transform: rotate3d(1, 1, 1, 360deg); }
+}
+
+@keyframes pulsate {
+  0% { transform: rotateX(90deg) scale(0.3) translateZ(20px); }
+  100% { transform: rotateX(90deg) scale(1) translateZ(0px); }
+}
